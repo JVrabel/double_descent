@@ -1,6 +1,6 @@
 
 @jit
-def train_step(step, opt_state,  batch_data, loss_fn):
+def train_step(lr, opt_state,  batch_data, loss_fn):
     """Implements train step.
     
     Args:
@@ -45,7 +45,7 @@ def calculate_accuracy(params, batch_data):
     predicted_class = jnp.argmax(nn_apply(params, inputs), axis=1)
     return jnp.mean(predicted_class == target_class)
 
-def loss_fn(params, batch_data):
+def cross_loss_fn(params, batch_data):
     """Implements cross-entropy loss function.
     
     Args:
