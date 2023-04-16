@@ -10,9 +10,7 @@ def JAX_train_step(model: callable, # could be also "params: Tuple"
                loss_fn: callable, 
                optimizer: callable,
                dataloader,
-               opt_state,
-               lr
-               ) -> Tuple:
+               opt_state) -> Tuple:
   """Trains a JAX model for a single epoch.
 
     ...........
@@ -37,7 +35,11 @@ def JAX_train_step(model: callable, # could be also "params: Tuple"
   # Loop through data loader data batches
   for batch, (X, y) in enumerate(dataloader):
 
-      loss_value, acc, opt_state = train_step(lr, opt_state, batch, loss_fn)
+      # Forward pass
+      y_pred = model(X)
+
+
+      loss_value, acc, opt_state = train_step(step, opt_state, batch, loss_fn)
 
       train_loss += loss #.item()
       train_acc += acc
@@ -52,26 +54,25 @@ def JAX_train_step(model: callable, # could be also "params: Tuple"
 def JAX_test_step(model: callable, # could be also "params: Tuple"
               loss_fn: callable, 
               dataloader) -> Tuple:
-  test_loss, test_acc = 0, 0
-  for batch, (X, y) in enumerate(dataloader):
+    test_loss, test_acc = 0, 0
+    for batch, (X, y) in enumerate(dataloader):
 
-    test_loss_value, test_acc = test_step(opt_state, batch)
+        test_loss_value, test_acc = test_step(opt_state, batch)
 
-    test_loss += test_loss_value
-    test_acc += test_acc
+        test_loss += test_loss_value
+        test_acc += test_acc
 
-  # Adjust metrics to get average loss and accuracy per batch 
-  test_loss = test_loss / len(dataloader)
-  test_acc = test_acc / len(dataloader)
-  return test_loss, test_acc
+    # Adjust metrics to get average loss and accuracy per batch 
+    test_loss = test_loss / len(dataloader)
+    test_acc = test_acc / len(dataloader)
+    return test_loss, test_acc
 
 def train(model: callable, 
           optimizer: callable,
           loss_fn: callable,
           epochs: int,
           train_dataloader,
-          test_dataloader,
-          lr 
+          test_dataloader 
           ) -> Dict[str, List]:
 
     
@@ -94,8 +95,7 @@ def train(model: callable,
       train_loss, train_acc = JAX_train_step(model=model,
                                           dataloader=train_dataloader,
                                           loss_fn=loss_fn,
-                                          optimizer=optimizer,
-                                          lr
+                                          optimizer=optimizer
                                           )
       test_loss, test_acc = JAX_test_step(model=model,
           dataloader=test_dataloader,

@@ -5,7 +5,7 @@ from flax import serialization
 from pathlib import Path
 import os
 
-def save_model(model,
+def save_model(model_params,
                target_dir: str,
                model_name: str):
     """Saves JAX model parameters to a file in a target directory.

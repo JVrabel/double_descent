@@ -1,6 +1,6 @@
 
 @jit
-def train_step(lr, opt_state,  batch_data, loss_fn):
+def train_step(step, opt_state,  batch_data, loss_fn):
     """Implements train step.
     
     Args:

@@ -33,7 +33,7 @@ train_dataloader, test_dataloader, class_names = data_setup.create_dataloaders(
     batch_size=BATCH_SIZE
 )
 
-# Create model with help from model_builder.py   # Usually, the "model" is called "nn_apply" in JAX (stax). 
+# Create model with help from model_builder.py
 nn_init, model = model_builder.MLP_stax(
     input_shape=INPUT_SHAPE,
     hidden_units=HIDDEN_UNITS,
@@ -42,12 +42,8 @@ nn_init, model = model_builder.MLP_stax(
 )
 
 # Set loss and optimizer
-loss_fn = cross_loss_fn()
-
-opt_init, opt_update, get_params = optimizers.momentum(LEARNING_RATE, 0.9) # ?? "optimizer" is substituted by "opt_update" in JAX (stax)
-output_shape, params_init = nn_init(random.PRNGKey(111), input_shape=(-1, 40))
-
-opt_state = opt_init(params_init)
+loss_fn = cross_loss_fn
+optimizer = opt_init, opt_update, get_params = optimizers.momentum(LEARNING_RATE, 0.9)
 
 # Start training with help from engine.py
 engine.train(model=model,
@@ -55,8 +51,7 @@ engine.train(model=model,
              test_dataloader=test_dataloader,
              loss_fn=loss_fn,
              optimizer=optimizer,
-             epochs=NUM_EPOCHS,
-             lr=LEARNING_RATE
+             epochs=NUM_EPOCHS
              )
 
 # Save the model with help from utils.py
